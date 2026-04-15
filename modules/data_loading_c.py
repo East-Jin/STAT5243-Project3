@@ -114,7 +114,7 @@ def data_loading_ui():
             ui.input_radio_buttons(
                 "source_mode",
                 "Data Source",
-                choices={"upload": "Upload a File", "builtin": "Built-in Dataset"},
+                choices={"upload": "Upload a File"},
                 selected="upload",
             ),
             ui.output_ui("source_controls"),

@@ -122,9 +122,7 @@ def user_guide_ui():
                                 ui.tags.li(
                                     "Choose a data source via the radio toggle: ",
                                     ui.tags.b("Upload a File"),
-                                    " (drag-and-drop or browse) or ",
-                                    ui.tags.b("Built-in Dataset"),
-                                    " (Titanic for classification, Ames Housing for regression).",
+                                    " (drag-and-drop or browse).",
                                 ),
                                 ui.tags.li(
                                     "Five file formats are supported: CSV, TSV, Excel, JSON, and Parquet.",
