@@ -1,0 +1,14 @@
+shiny==1.1.0
+shinyswatch
+shinywidgets
+pandas
+numpy
+matplotlib
+scikit-learn
+pyreadr
+openpyxl
+pyarrow
+plotly
+seaborn
+statsmodels
+anywidget
