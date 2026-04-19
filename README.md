@@ -1,4 +1,4 @@
-# STAT5234-Project3
+# STAT5243-Project3
 ## OLD LINKS: 
 ## Live App(Original): https://zd2372.shinyapps.io/data_explorer/
 ## Live App(Changed): https://xl3548.shinyapps.io/my-python-app1/
