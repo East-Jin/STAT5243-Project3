@@ -17,28 +17,6 @@ date: "2026-04-19"
 
 ## 4. Results & Insights
 
-#### 4.1 Statistical Analysis
-
-This A/B test aimed to determine whether a guided onboarding experience with a built-in demo dataset (Version B) would significantly increase the dataset loading success rate compared to a blank interface requiring manual upload (Version A). The experiment recorded 70 active users, with 40 users cleanly assigned to the two variants (20 users in Group A and 20 users in Group B).
-
--   **Primary Metric (Dataset Loading Success Rate):**
-
-    -   **Version A (Control):** 9 out of 20 users successfully loaded a dataset (45.0% success rate).
-
-    -   **Version B (Treatment):** 4 out of 20 users successfully loaded a dataset (20.0% success rate).
-
--   **Significance Testing:** Due to the small sample size (n = 40), a two-sided Fisher's Exact Test was employed rather than a standard Chi-square test.
-
-    -   **P-value:** 0.1760
-
-    -   **Conclusion:** At a significance level of α = 0.05, the p-value is greater than 0.05. Therefore, we fail to reject the null hypothesis. While there is a 25% absolute difference in conversion rates favoring the Control group, this difference is not statistically significant.
-
-ere is the "Results and Insights" section written in formal, academic English, ready to be copied directly into your final STATGR5243 Project 3 report.
-
-------------------------------------------------------------------------
-
-### **4. Results and Insights**
-
 #### **4.1 Statistical Analysis Results**
 
 This A/B test aimed to determine whether a guided onboarding experience with a built-in demo dataset (Version B) would significantly increase the dataset loading success rate compared to a blank interface requiring manual upload (Version A). The experiment recorded 70 active users, with 40 users cleanly assigned to the two variants (n=20 users in Group A and n=20 users in Group B).
