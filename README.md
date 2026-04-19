@@ -8,13 +8,6 @@
 ## Version A: https://dz2590.shinyapps.io/project3-1/
 ## Version B: https://dz2590.shinyapps.io/project3-2/ 
 
----
-title: "Untitled"
-output: html_document
-date: "2026-04-19"
----
-
-
 ## 4. Results & Insights
 
 #### **4.1 Statistical Analysis Results**
