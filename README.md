@@ -14,9 +14,6 @@ output: html_document
 date: "2026-04-19"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## 4. Results & Insights
 
