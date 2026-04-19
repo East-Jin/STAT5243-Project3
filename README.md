@@ -210,9 +210,17 @@ STAT5243-Project3/
 
 1. Clone the repository.
 2. Install dependencies from `requirements.txt`.
-3. Run one of the app entry files:
+3. Run the files
+   * `app.py` - Version A
+   * `app_B.py` - Version B
+  
+For the router-based experiment setup,
 
-   * `app.py`
-   * `app_B.py`
+4. Deploy the files to shinyapps.io
+  * `app.py`
+  * `app_B.py`
+5. Copy and paste the URLs assigned to these versions into the file: 
+  * `router_app.py`
+6. Deploy the file to shinyapps.io
+  * `router_app.py`
 
-For the router-based experiment setup, use the files inside the `router/` directory.
