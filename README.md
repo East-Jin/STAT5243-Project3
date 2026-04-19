@@ -1,102 +1,218 @@
 # STAT5243-Project3
-## OLD LINKS: 
-## Live App(Original): https://zd2372.shinyapps.io/data_explorer/
-## Live App(Changed): https://xl3548.shinyapps.io/my-python-app1/
 
-## UPDATED LINKS: 
-## https://dz2590.shinyapps.io/project3-router/ (This randomly assigns user version A or B)
-## Version A: https://dz2590.shinyapps.io/project3-1/
-## Version B: https://dz2590.shinyapps.io/project3-2/ 
+A Python Shiny web application for interactive data analysis, extended with an A/B testing framework to study how onboarding design influences early task completion.
 
-## 4. Results & Insights
+## Project Overview
 
-#### **4.1 Statistical Analysis Results**
+This project was completed for STAT 5243: Applied Data Science.
 
-This A/B test aimed to determine whether a guided onboarding experience with a built-in demo dataset (Version B) would significantly increase the dataset loading success rate compared to a blank interface requiring manual upload (Version A). The experiment recorded 70 active users, with 40 users cleanly assigned to the two variants (n=20 users in Group A and n=20 users in Group B).
+We built a live Data Explorer app and then designed an A/B test to evaluate whether different onboarding experiences affect users’ ability to successfully begin using the application.
 
--   **Primary Metric (Dataset Loading Success Rate):**
+The app supports a multi-step workflow for:
 
-    -   **Version A (Control):** 9 out of 20 users successfully loaded a dataset (45.0% success rate).
+* data loading
+* data cleaning
+* feature engineering
+* exploratory data analysis
 
-    -   **Version B (Treatment):** 4 out of 20 users successfully loaded a dataset (20.0% success rate).
+Since dataset loading is the first required step before users can access the rest of the workflow, our experiment focused on whether onboarding design affects dataset loading success.
 
--   **Significance Testing:** Due to the small sample size (n = 40), a two-sided Fisher's Exact Test was employed rather than a standard Chi-square test.
+## Research Question
 
-    -   **P-value:** 0.1760
+Does a guided onboarding experience improve the likelihood that a user successfully loads a dataset into the application, compared with a more minimal interface?
 
-    -   **Conclusion:** At a significance level of α = 0.05, the p-value is greater than 0.05. Therefore, we **fail to reject the null hypothesis**. While there is a 25% absolute difference in conversion rates favoring the Control group, this difference is not statistically significant.
+### Hypotheses
 
-#### **4.2 User Behavior Insights**
+* **H0:** There is no difference in dataset loading success rate between the two interface variants.
+* **H1:** There is a difference in dataset loading success rate between the two interface variants.
 
-Although the statistical results did not achieve significance, the behavioral data from Google Analytics 4 (GA4) revealed several counter-intuitive patterns:
+## Live Apps
 
--   **Engagement Disparity:** The Control group (Version A) generated significantly more page interactions, recording 400 `tab_view` events compared to 242 events in the Treatment group (Version B). This suggests that users presented with a blank interface spent more time navigating the application, potentially exploring the interface to understand how to upload their own data.
+### Current Experiment Links
 
--   **The Conversion Bottleneck:** Across the experiment, 15 unique users reached the "EDA" tab, yet only 11 users successfully triggered the `dataset_loaded_success` event. This indicates a 35% drop-off rate between navigating to the analysis environment and actually loading data, highlighting a critical point of friction in the user journey.
+* **Router:** [https://dz2590.shinyapps.io/project3-router/](https://dz2590.shinyapps.io/project3-router/)
+  Randomly assigns users to Version A or Version B.
+* **Version A:** [https://dz2590.shinyapps.io/project3-1/](https://dz2590.shinyapps.io/project3-1/)
+* **Version B:** [https://dz2590.shinyapps.io/project3-2/](https://dz2590.shinyapps.io/project3-2/)
 
--   **Demo Data Utilization:** In Version B, the built-in demo datasets (such as Titanic and Ames Housing) triggered 14 distinct interactions. This demonstrates that the guided design successfully captured initial user attention, but failed to translate that engagement into full task completion.
+### Earlier Deployment Links
 
-#### **4.3 Discussion and Limitations**
+* **Original App:** [https://zd2372.shinyapps.io/data_explorer/](https://zd2372.shinyapps.io/data_explorer/)
+* **Changed App:** [https://xl3548.shinyapps.io/my-python-app1/](https://xl3548.shinyapps.io/my-python-app1/)
 
-The unexpected underperformance of the guided onboarding version can be attributed to several factors and experimental limitations:
+## What the App Does
 
--   **Selection Bias:** All acquired traffic was categorized as "(direct) / (none)" within GA4. Given the context of this project, the user base primarily consisted of graduate statistics students. This highly technical demographic likely possesses a higher tolerance for blank interfaces and a strong preference for uploading their own custom datasets. For these users, the "blank page" was an expected workspace rather than a point of friction.
+The Data Explorer app was designed as a modular workflow with the following tabs:
 
--   **Tracking Fragmentation:** Approximately 24 active users were categorized under the `(not set)` group dimension. This data loss was likely caused by advanced client-side privacy settings (e.g., ad-blockers, browser tracking prevention) prevalent among technical users, or by JavaScript race conditions where the tracking payload fired before the randomization algorithm completed its assignment. While we isolated the cleanly tracked users for a valid complete-case analysis, this fragmentation reduced the overall power of our statistical test.
+* User Guide
+* Data Loading
+* Data Cleaning
+* Feature Engineering
+* EDA
 
--   **Cognitive Load of Onboarding:** While Version B was designed to reduce friction, a guided walkthrough can inadvertently introduce a different type of cognitive load. For advanced users who already understand data analysis workflows, a forced tutorial or pre-loaded demo may feel restrictive, leading to premature abandonment of the application.
+The application supports multiple file formats, including CSV, TSV, Excel, JSON, and Parquet, and also includes built-in datasets such as Titanic and Ames Housing.
 
-```{python}
-import pandas as pd
-from scipy.stats import fisher_exact
+## A/B Testing Design
 
-# 1. Read the CSV file exported from GA4
-# The first 6-7 lines of GA4 exports are usually report metadata, so we use skiprows to bypass them.
-try:
-    df = pd.read_csv("download.csv", skiprows=7, names=['Group', 'Event name', 'Active users', 'Event count', 'Extra'])
-except FileNotFoundError:
-    print("Error: File not found. Please ensure you have uploaded 'download.csv' to the Colab files pane on the left!")
-    raise
+This study used a between-subjects A/B design.
 
-# 2. Data Cleaning
-# Remove empty rows without group information and filter out the '(not set)' ghost users
-df = df.dropna(subset=['Group'])
-df = df[df['Group'] != '(not set)']
-if 'Extra' in df.columns:
-    df = df.drop(columns=['Extra'])
+Users first entered through a router application, which randomly assigned them to one of two app versions, stored the assignment in local storage, and redirected them to the corresponding deployment.
 
-# 3. Extract Core Metrics
-# Find the active users who successfully loaded data ('dataset_loaded_success') for Group A and Group B
-success_a_series = df[(df['Group'] == 'A') & (df['Event name'] == 'dataset_loaded_success')]['Active users']
-success_b_series = df[(df['Group'] == 'B') & (df['Event name'] == 'dataset_loaded_success')]['Active users']
+To measure user behavior, the app was instrumented with Google Analytics 4. Tracked events included:
 
-success_a = int(success_a_series.iloc[0]) if not success_a_series.empty else 0
-success_b = int(success_b_series.iloc[0]) if not success_b_series.empty else 0
+* experimental assignment
+* tab views
+* engagement-related interactions
+* button clicks
+* dataset loading success
 
-# Based on the GA4 data, the total number of users for each group is 20
-total_a = 20
-total_b = 20
+The main outcome metric was dataset loading success, since loading a dataset is the first necessary step before users can proceed to cleaning, feature engineering, or EDA.
 
-fail_a = total_a - success_a
-fail_b = total_b - success_b
+## Data Collection
 
-print("=== Data Summary ===")
-print(f"Group A (Control)   - Success: {success_a}, Fail: {fail_a}")
-print(f"Group B (Treatment) - Success: {success_b}, Fail: {fail_b}")
+User interaction data were collected from the live deployed application through GA4 event tracking.
 
-# 4. Build Contingency Table & Perform Fisher's Exact Test
-contingency_table = [[success_a, fail_a], 
-                     [success_b, fail_b]]
+* Total active users recorded: 70
+* Users cleanly assigned and retained for inference: 40
+* Group A: 20 users
+* Group B: 20 users
 
-odds_ratio, p_value = fisher_exact(contingency_table, alternative='two-sided')
+For analysis, the exported GA4 data were cleaned by:
 
-print("\n=== Hypothesis Test Results ===")
-print(f"Group A Conversion Rate: {(success_a / total_a) * 100:.1f}%")
-print(f"Group B Conversion Rate: {(success_b / total_b) * 100:.1f}%")
-print(f"P-value (Fisher's Exact Test): {p_value:.4f}")
+* removing rows with missing group labels
+* excluding observations marked as “(not set)”
 
-if p_value < 0.05:
-    print("Conclusion: Reject the null hypothesis. The difference is statistically significant.")
-else:
-    print("Conclusion: Fail to reject the null hypothesis. The difference is not statistically significant.")
+The cleaned data were then used to construct a 2×2 contingency table for statistical testing.
+
+## Statistical Analysis
+
+Because the primary outcome was binary, users were classified as either:
+
+* successful dataset loading
+* unsuccessful dataset loading
+
+Given the small usable sample size, a two-sided Fisher’s Exact Test was used instead of a Chi-square test.
+
+### Primary Metric Results
+
+* **Version A:** 9/20 users succeeded (45.0%)
+* **Version B:** 4/20 users succeeded (20.0%)
+
+### Test Result
+
+* **P-value:** 0.1760
+
+At the 0.05 significance level, we **failed to reject the null hypothesis**. The observed difference was not statistically significant, although the raw conversion rate was higher in Version A.
+
+## Results and Insights
+
+Even though the difference was not statistically significant, the experiment still revealed several useful behavioral patterns.
+
+* Higher interaction volume in Version A:
+  Version A recorded 400 `tab_view` events, compared with 242 `tab_view` events in Version B.
+
+* A conversion bottleneck remained early in the workflow:
+  15 users reached the EDA tab, but only 11 users triggered `dataset_loaded_success`.
+
+* Built-in demo datasets attracted attention in Version B:
+  Demo datasets such as "Titanic" and "Ames Housing" generated 14 interactions, but that engagement did not translate into higher completion of the main task.
+
+Overall, the experiment suggests that onboarding design can influence how users interact with the application, even when it does not improve the primary conversion outcome.
+
+## Interpretation
+
+The main takeaway is that the guided onboarding intervention did not produce a statistically significant improvement in dataset-loading success.
+
+A possible explanation is that many users in this study were already comfortable with data workflows. For those users, a simpler workspace with direct upload options may have felt faster and more intuitive than a more guided first-use experience.
+
+This result suggests that onboarding is not equally beneficial for every audience. A future improvement would be to make the existing pathways more adaptive, so that experienced users can move quickly into the workflow while less experienced users receive stronger guidance when needed.
+
+## Limitations
+
+This study has several limitations:
+
+* The usable sample size was small.
+* The participant pool likely came from direct sharing and was not broadly representative.
+* A portion of traffic appeared under “(not set)”, which reduced the usable sample.
+* Assignment was stored at the browser level rather than through authenticated user identities.
+* The experiment focused on early task completion rather than longer-term engagement.
+
+## Repository Structure
+
+```text
+STAT5243-Project3/
+│
+├── .idea/
+│   ├── inspectionProfiles/
+│   │   └── profiles_settings.xml
+│   ├── .name
+│   ├── STAT5234-Project3.iml
+│   ├── misc.xml
+│   ├── modules.xml
+│   ├── vcs.xml
+│   └── workspace.xml
+│
+├── __pycache__/
+│   ├── app.cpython-313.pyc
+│   └── app_B.cpython-313.pyc
+│
+├── data/
+│   ├── ames_housing.csv
+│   └── titanic.csv
+│
+├── docs/
+│   └── ARCHITECTURE.md
+│
+├── modules/
+│   ├── __pycache__/
+│   │   ├── __init__.cpython-313.pyc
+│   │   ├── data_cleaning.cpython-313.pyc
+│   │   ├── data_loading.cpython-313.pyc
+│   │   ├── data_loading_c.cpython-313.pyc
+│   │   ├── eda.cpython-313.pyc
+│   │   ├── feature_engineering.cpython-313.pyc
+│   │   ├── user_guide.cpython-313.pyc
+│   │   └── user_guide_c.cpython-313.pyc
+│   ├── __init__.py
+│   ├── data_cleaning.py
+│   ├── data_loading.py
+│   ├── data_loading_c.py
+│   ├── eda.py
+│   ├── feature_engineering.py
+│   ├── user_guide.py
+│   └── user_guide_c.py
+│
+├── router/
+│   ├── rsconnect-python/
+│   │   └── router.json
+│   ├── requirements.txt
+│   └── router_app.py
+│
+├── rsconnect-python/
+│   └── STAT5234-Project3-main.json
+│
+├── shared/
+│   ├── __pycache__/
+│   │   ├── __init__.cpython-313.pyc
+│   │   ├── data_store.cpython-313.pyc
+│   │   └── sample_datasets.cpython-313.pyc
+│   ├── __init__.py
+│   ├── data_store.py
+│   └── sample_datasets.py
+│
+├── README.md
+├── app.py
+├── app_B.py
+└── requirements.txt
 ```
+
+## How to Run Locally
+
+1. Clone the repository.
+2. Install dependencies from `requirements.txt`.
+3. Run one of the app entry files:
+
+   * `app.py`
+   * `app_B.py`
+
+For the router-based experiment setup, use the files inside the `router/` directory.
