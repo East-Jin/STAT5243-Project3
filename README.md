@@ -200,6 +200,8 @@ STAT5243-Project3/
 │   ├── data_store.py
 │   └── sample_datasets.py
 │
+├── Google_Analytics.csv
+├── Google_Analytics_Code.py
 ├── README.md
 ├── app.py
 ├── app_B.py
